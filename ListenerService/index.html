@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="index.css" />
+    <title>SocketIO</title>
+  </head>
+  <body>
+    <div id="datadiv">
+      <table id="datatable">
+        <tr>
+          <th>Data</th>
+        </tr>
+        <tr id="datarow">
+          <td></td>
+        </tr>
+      </table>
+    </div>
+    <script src="socket.io/socket.io.js"></script>
+    <script>
+      const socket = io();
+
+      socket.on("connect", () => {
+        console.log("Connected to server:", socket.id);
+      });
+
+      const submitButton = document.getElementById("submit");
+      const dataRow = document.getElementById("datarow");
+
+      submitButton.addEventListener("click", () => {
+        socket.emit("message", "Hey, message from client");
+      });
+
+      socket.on("data", (data) => {
+        dataRow.innerHTML = "";
+
+        data.forEach((item) => {
+          const newRow = document.createElement("tr");
+          const newCell = document.createElement("td");
+          newCell.textContent = item.data;
+          newRow.appendChild(newCell);
+          dataRow.appendChild(newRow);
+        });
+      });
+
+      socket.on("disconnect", () => {
+        console.log("Disconnected from server");
+      });
+    </script>
+  </body>
+</html>
